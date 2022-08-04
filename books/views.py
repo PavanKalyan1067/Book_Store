@@ -5,7 +5,6 @@ from rest_framework_simplejwt.settings import api_settings
 from accounts import logger
 from accounts.models import User
 from accounts.status import response_code, DoesNotExist
-
 from books.models import Book
 from books.serializers import AddBookSerializer, BookSerializer
 
@@ -26,12 +25,6 @@ class AddBookAPI(generics.GenericAPIView):
 
     def post(self, request):
         try:
-            if not request.user.is_staff:
-                response = {
-                    'success': True,
-                    'message': "Only staff can perform this action",
-                }
-                return Response(response, status=status.HTTP_404_NOT_FOUND)
             if request.user.is_staff:
                 data = request.data
                 book = AddBookSerializer(data=data)
@@ -43,6 +36,11 @@ class AddBookAPI(generics.GenericAPIView):
                     'data': book.data
                 }
                 return Response(response)
+            response = {
+                'success': False,
+                'message': "Only staff can perform this action",
+            }
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             response = {
                 'success': False,
@@ -53,6 +51,7 @@ class AddBookAPI(generics.GenericAPIView):
 
 
 class GetBookAPI(generics.GenericAPIView):
+    serializer_class = BookSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
@@ -67,6 +66,11 @@ class GetBookAPI(generics.GenericAPIView):
                     'data': book_s.data
                 }
                 return Response(response)
+            response = {
+                'success': False,
+                'message': response_code[416],
+            }
+            return Response(response, status=status.HTTP_404_NOT_FOUND)
         except DoesNotExist as e:
             response = {
                 'success': False,
@@ -86,21 +90,24 @@ class GetBookAPI(generics.GenericAPIView):
 
 
 class UpdateBookAPI(generics.GenericAPIView):
+    serializer_class = BookSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
     def patch(self, request, pk):
         user = request.user
         try:
             if user.is_staff:
                 book = Book.objects.get(pk=pk)
-                if book:
-                    book = BookSerializer(book, request.data, partial=True)
-                    book.is_valid(raise_exception=True)
-                    book.save()
-                    response = {
-                        'success': True,
-                        'message': response_code[200],
-                        'data': book.data
-                    }
-                    return Response(response)
+                book = BookSerializer(book, request.data, partial=True)
+                book.is_valid(raise_exception=True)
+                book.save()
+                response = {
+                    'success': True,
+                    'message': response_code[200],
+                    'data': book.data
+                }
+                return Response(response)
+            return Response({'success': False, 'message': 'Book not updated'}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             response = {
                 'success': False,
@@ -111,19 +118,22 @@ class UpdateBookAPI(generics.GenericAPIView):
 
 
 class DeleteBookAPI(generics.GenericAPIView):
+    serializer_class = BookSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
     def delete(self, request, pk):
         user = request.user
         try:
             if user.is_staff:
                 book = Book.objects.get(pk=pk)
-                if book:
-                    book.delete()
-                    response = {
-                        'success': True,
-                        'message': response_code[200],
-                    }
-                    return Response(response)
-        except DoesNotExist as e:
+                book.delete()
+                response = {
+                    'success': True,
+                    'message': response_code[200],
+                }
+                return Response(response)
+            return Response({'success': False, 'message': 'user not a staff'}, status=status.HTTP_400_BAD_REQUEST)
+        except Book.DoesNotExist as e:
             response = {
                 'success': False,
                 'message': response_code[307],

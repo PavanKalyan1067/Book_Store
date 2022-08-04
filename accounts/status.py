@@ -33,3 +33,7 @@ response_code = {
     418: "User already Blacklisted",
     419: "Tokens Generated Successfully"
 }
+
+
+class DoesNotExist:
+    pass

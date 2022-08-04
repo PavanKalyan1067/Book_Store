@@ -33,7 +33,6 @@ RegisterView(generics.GenericAPIView) is for registering a new user
 
 class RegisterView(generics.GenericAPIView):
     serializer_class = RegisterSerializer
-
     renderer_classes = (UserRenderer,)
 
     def post(self, request):
