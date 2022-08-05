@@ -40,9 +40,11 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_framework_simplejwt.token_blacklist',
     'accounts',
-    'rest_framework_swagger',
     'books',
     'carts',
+    'orders',
+    'drf_yasg',
+
 ]
 
 MIDDLEWARE = [
