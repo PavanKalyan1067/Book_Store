@@ -37,3 +37,13 @@ response_code = {
 
 class DoesNotExist:
     pass
+
+
+class CustomExceptions:
+    @classmethod
+    def CartDoesNotExist(cls, param, param1):
+        pass
+
+
+class CartDoesNotExist(CustomExceptions):
+    pass
