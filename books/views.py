@@ -92,42 +92,42 @@ class GetBookAPI(generics.GenericAPIView):
             return Response(response)
 
 
-class GetBookAPI1(generics.GenericAPIView):
-    serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get(self, request):
-        try:
-            user = request.user.is_staff
-            if user.is_staff:
-                book_s = BookRedis.extract(user=user)
-                response = {
-                    'success': True,
-                    'message': response_code[200],
-                    'data': book_s.data
-                }
-                return Response(response)
-            response = {
-                'success': False,
-                'message': response_code[416],
-            }
-            return Response(response, status=status.HTTP_404_NOT_FOUND)
-        except DoesNotExist as e:
-            response = {
-                'success': False,
-                'message': response_code[307],
-                'data': str(e)
-            }
-            logger.exception(e)
-            return Response(response)
-        except Exception as e:
-            response = {
-                'success': False,
-                'message': response_code[416],
-                'data': str(e)
-            }
-            logger.exception(e)
-            return Response(response)
+# class GetBookAPI1(generics.GenericAPIView):
+#     serializer_class = BookSerializer
+#     permission_classes = [permissions.IsAuthenticated]
+#
+#     def get(self, request):
+#         try:
+#             user = request.user.is_staff
+#             if user.is_staff:
+#                 book_s = BookRedis.extract(user=user)
+#                 response = {
+#                     'success': True,
+#                     'message': response_code[200],
+#                     'data': book_s.data
+#                 }
+#                 return Response(response)
+#             response = {
+#                 'success': False,
+#                 'message': response_code[416],
+#             }
+#             return Response(response, status=status.HTTP_404_NOT_FOUND)
+#         except DoesNotExist as e:
+#             response = {
+#                 'success': False,
+#                 'message': response_code[307],
+#                 'data': str(e)
+#             }
+#             logger.exception(e)
+#             return Response(response)
+#         except Exception as e:
+#             response = {
+#                 'success': False,
+#                 'message': response_code[416],
+#                 'data': str(e)
+#             }
+#             logger.exception(e)
+#             return Response(response)
 
 
 class UpdateBookAPI(generics.GenericAPIView):
