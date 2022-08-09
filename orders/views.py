@@ -15,7 +15,7 @@ class OrderAPI(APIView):
 
     @swagger_auto_schema(manual_parameters=[
         openapi.Parameter('Authorization', openapi.IN_HEADER, "token", type=openapi.TYPE_STRING)
-    ],request_body=OrderSerializer)
+    ], request_body=OrderSerializer)
     def post(self, request):
         try:
             data = request.data

@@ -9,6 +9,9 @@ from books.models import Book
 from books.serializers import AddBookSerializer, BookSerializer
 from books.utils import BookRedis
 
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+
 
 def get_user(token):
     jwt_decode_handler = api_settings.JWT_DECODE_HANDLER
@@ -24,6 +27,9 @@ class AddBookAPI(generics.GenericAPIView):
     queryset = Book.objects.all()
     permission_classes = [permissions.IsAuthenticated]
 
+    @swagger_auto_schema(manual_parameters=[
+        openapi.Parameter('Authorization', openapi.IN_HEADER, "token", type=openapi.TYPE_STRING)
+    ], request_body=AddBookSerializer)
     def post(self, request):
         try:
             user = request.user.is_staff
@@ -57,6 +63,9 @@ class GetBookAPI(generics.GenericAPIView):
     serializer_class = BookSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    @swagger_auto_schema(manual_parameters=[
+        openapi.Parameter('Authorization', openapi.IN_HEADER, "token", type=openapi.TYPE_STRING)
+    ])
     def get(self, request):
         try:
             user = request.user
@@ -134,6 +143,9 @@ class UpdateBookAPI(generics.GenericAPIView):
     serializer_class = BookSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    # @swagger_auto_schema(manual_parameters=[
+    #     openapi.Parameter('Authorization', openapi.IN_HEADER, "token", type=openapi.TYPE_STRING)
+    # ], request_body=BookSerializer)
     def patch(self, request, pk):
         user = request.user
         try:
