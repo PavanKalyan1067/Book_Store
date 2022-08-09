@@ -49,6 +49,7 @@ class RetrieveCartAPI(generics.GenericAPIView):
     @swagger_auto_schema(manual_parameters=[
         openapi.Parameter('Authorization', openapi.IN_HEADER, "token", type=openapi.TYPE_STRING)
     ])
+    @method_decorator(cache_page(60 * 60))
     def get(self, request):
         user = request.user
         try:
