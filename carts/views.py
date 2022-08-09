@@ -1,3 +1,5 @@
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 
@@ -6,11 +8,17 @@ from accounts.views import logger
 from carts.models import Cart
 from carts.serializers import AddCartSerializer, GetAllCartSerializer
 
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+
 
 class AddToCartAPI(generics.GenericAPIView):
     serializer_class = AddCartSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    @swagger_auto_schema(manual_parameters=[
+        openapi.Parameter('Authorization', openapi.IN_HEADER, "token", type=openapi.TYPE_STRING)
+    ], request_body=AddCartSerializer)
     def post(self, request):
         data = request.data
         try:
@@ -38,6 +46,9 @@ class RetrieveCartAPI(generics.GenericAPIView):
     serializer_class = GetAllCartSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    @swagger_auto_schema(manual_parameters=[
+        openapi.Parameter('Authorization', openapi.IN_HEADER, "token", type=openapi.TYPE_STRING)
+    ])
     def get(self, request):
         user = request.user
         try:
