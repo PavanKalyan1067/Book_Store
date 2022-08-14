@@ -7,10 +7,12 @@ from accounts.views import (
     SetNewPasswordAPIView,
     ForgotPasswordResetEmailAPIView,
     UserProfileView,
+    Home,
 )
 from rest_framework_simplejwt.views import (TokenRefreshView, )
 
 urlpatterns = [
+    path('profile/', Home.as_view(), name='profile'),
     path('api/register/', RegisterView.as_view(), name="register"),
     path('api/login/', LoginAPIView.as_view(), name="login"),
     path('api/logout/', LogoutAPIView.as_view(), name="logout"),

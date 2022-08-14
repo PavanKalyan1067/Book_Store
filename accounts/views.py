@@ -1,4 +1,6 @@
 import jwt
+from django.shortcuts import render
+from django.views.generic import TemplateView
 from rest_framework import generics
 from rest_framework_jwt.settings import api_settings
 from rest_framework.response import Response
@@ -19,6 +21,7 @@ from accounts.serializers import (
     UserPasswordResetSerializer,
     ForgotPasswordSerializer,
     LoginSerializer,
+    LogoutSerializer,
 )
 
 logger = get_logger()
@@ -31,9 +34,16 @@ RegisterView(generics.GenericAPIView) is for registering a new user
 '''
 
 
+class Home(TemplateView):
+    template_name = 'Home.html'
+
+
 class RegisterView(generics.GenericAPIView):
     serializer_class = RegisterSerializer
     renderer_classes = (UserRenderer,)
+
+    def get(self, request):
+        return render(request, 'registration.html')
 
     def post(self, request):
         try:
@@ -170,7 +180,10 @@ LogoutAPIView(generics.GenericAPIView) is for logging out the user
 
 
 class LogoutAPIView(generics.GenericAPIView):
-    serializer_class = RegisterSerializer
+    serializer_class = LogoutSerializer
+
+    def get(self, request):
+        return render(request, 'logout.html')
 
     def post(self, request):
         try:
@@ -229,6 +242,9 @@ LoginAPIView(generics.GenericAPIView) is for Login for user who have registered
 
 class LoginAPIView(generics.GenericAPIView):
     serializer_class = LoginSerializer
+
+    def get(self, request):
+        return render(request, 'login.html')
 
     def post(self, request):
         try:
