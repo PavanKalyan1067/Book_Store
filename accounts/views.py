@@ -1,14 +1,15 @@
 import jwt
+
 from django.shortcuts import render
 from django.views.generic import TemplateView
+from django.conf import settings
+from django.contrib.sites.shortcuts import get_current_site
+from django.urls import reverse
+
 from rest_framework import generics
 from rest_framework_jwt.settings import api_settings
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-
-from django.conf import settings
-from django.contrib.sites.shortcuts import get_current_site
-from django.urls import reverse
 
 from accounts.logger import get_logger
 from accounts.status import response_code
@@ -29,16 +30,15 @@ logger = get_logger()
 jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 
-'''
-RegisterView(generics.GenericAPIView) is for registering a new user
-'''
-
 
 class Home(TemplateView):
     template_name = 'Home.html'
 
 
 class RegisterView(generics.GenericAPIView):
+    """
+    RegisterView(generics.GenericAPIView) is for registering a new user
+    """
     serializer_class = RegisterSerializer
     renderer_classes = (UserRenderer,)
 
@@ -78,12 +78,10 @@ class RegisterView(generics.GenericAPIView):
             return Response(response)
 
 
-'''
-VerifyEmail(generics.GenericAPIView) is for Verifying email for new user after registration
-'''
-
-
 class VerifyEmail(generics.GenericAPIView):
+    """
+    VerifyEmail(generics.GenericAPIView) is for Verifying email for new user after registration
+    """
     serializer_class = EmailVerificationSerializer
 
     def get(self, request):
@@ -118,12 +116,11 @@ class VerifyEmail(generics.GenericAPIView):
             return Response(response)
 
 
-'''ForgotPasswordResetEmailAPIView(generics.GenericAPIView) is for it will send the link to email to reset the 
-password for existing user
-'''
-
-
 class ForgotPasswordResetEmailAPIView(generics.GenericAPIView):
+    """
+    ForgotPasswordResetEmailAPIView(generics.GenericAPIView) is for it will send the link to email to reset the
+    password for existing user
+    """
     renderer_classes = [UserRenderer]
     serializer_class = ForgotPasswordSerializer
 
@@ -146,12 +143,10 @@ class ForgotPasswordResetEmailAPIView(generics.GenericAPIView):
             return Response(response)
 
 
-'''
-SetNewPasswordAPIView(generics.GenericAPIView) is for updating new password for Existing user
-'''
-
-
 class SetNewPasswordAPIView(generics.GenericAPIView):
+    """
+    SetNewPasswordAPIView(generics.GenericAPIView) is for updating new password for Existing user
+    """
     renderer_classes = [UserRenderer]
     serializer_class = UserPasswordResetSerializer
 
@@ -174,12 +169,10 @@ class SetNewPasswordAPIView(generics.GenericAPIView):
             return Response(response)
 
 
-'''
-LogoutAPIView(generics.GenericAPIView) is for logging out the user
-'''
-
-
 class LogoutAPIView(generics.GenericAPIView):
+    """
+    LogoutAPIView(generics.GenericAPIView) is for logging out the user
+    """
     serializer_class = LogoutSerializer
 
     def get(self, request):
@@ -205,12 +198,10 @@ class LogoutAPIView(generics.GenericAPIView):
             return Response(response)
 
 
-'''
-UserProfileView(generics.GenericAPIView) is for get all the users who have registered
-'''
-
-
 class UserProfileView(generics.GenericAPIView):
+    """
+    UserProfileView(generics.GenericAPIView) is for get all the users who have registered
+    """
     renderer_classes = [UserRenderer]
     serializer_class = RegisterSerializer
     queryset = User.objects.all()
@@ -235,12 +226,10 @@ class UserProfileView(generics.GenericAPIView):
             return Response(response)
 
 
-'''
-LoginAPIView(generics.GenericAPIView) is for Login for user who have registered
-'''
-
-
 class LoginAPIView(generics.GenericAPIView):
+    """
+    LoginAPIView(generics.GenericAPIView) is for Login for user who have registered
+    """
     serializer_class = LoginSerializer
 
     def get(self, request):
