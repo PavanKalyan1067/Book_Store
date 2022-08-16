@@ -1,18 +1,23 @@
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-from rest_framework import status, permissions
+
+from rest_framework import status, permissions, generics
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from accounts.status import response_code, CustomExceptions
 from accounts.views import logger
-from .models import Order
+
+from orders.models import Order
 from orders.serializers import OrderSerializer, GetOrderSerializer
+
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 
 
-class OrderAPI(APIView):
+class OrderAPIView(generics.GenericAPIView):
+    """
+    OrderAPIView is for place the order
+    """
     serializer_class = OrderSerializer
 
     @swagger_auto_schema(manual_parameters=[
@@ -42,7 +47,10 @@ class OrderAPI(APIView):
             return Response(response)
 
 
-class GetOrderAPI(APIView):
+class GetOrderAPIView(generics.GenericAPIView):
+    """
+    GetOrderAPIView is for get the order by user and all the details
+    """
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = GetOrderSerializer
 
