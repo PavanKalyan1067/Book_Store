@@ -1,5 +1,6 @@
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
+
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework_simplejwt.settings import api_settings
@@ -7,6 +8,7 @@ from rest_framework_simplejwt.settings import api_settings
 from accounts import logger
 from accounts.models import User
 from accounts.status import response_code, DoesNotExist
+
 from books.models import Book
 from books.serializers import AddBookSerializer, BookSerializer
 from books.utils import BookRedis
@@ -25,6 +27,9 @@ def get_user(token):
 
 
 class AddBookAPI(generics.GenericAPIView):
+    """
+    AddBookAPI is for Add Book by user
+    """
     serializer_class = AddBookSerializer
     queryset = Book.objects.all()
     permission_classes = [permissions.IsAuthenticated]
@@ -62,6 +67,9 @@ class AddBookAPI(generics.GenericAPIView):
 
 
 class GetBookAPI(generics.GenericAPIView):
+    """
+    GetBookAPI is for get all Books and user details
+    """
     serializer_class = BookSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -105,12 +113,12 @@ class GetBookAPI(generics.GenericAPIView):
 
 
 class UpdateBookAPI(generics.GenericAPIView):
+    """
+    UpdateBookAPI is for update Book by id
+    """
     serializer_class = BookSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    # @swagger_auto_schema(manual_parameters=[
-    #     openapi.Parameter('Authorization', openapi.IN_HEADER, "token", type=openapi.TYPE_STRING)
-    # ], request_body=BookSerializer)
     def patch(self, request, pk):
         user = request.user
         try:
@@ -136,6 +144,9 @@ class UpdateBookAPI(generics.GenericAPIView):
 
 
 class DeleteBookAPI(generics.GenericAPIView):
+    """
+    DeleteBookAPI is for delete Book by id
+    """
     serializer_class = BookSerializer
     permission_classes = [permissions.IsAuthenticated]
 
