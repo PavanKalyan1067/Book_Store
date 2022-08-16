@@ -1,10 +1,12 @@
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
+
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 
 from accounts.status import response_code
 from accounts.views import logger
+
 from carts.models import Cart
 from carts.serializers import AddCartSerializer, GetAllCartSerializer
 
@@ -13,6 +15,9 @@ from drf_yasg.utils import swagger_auto_schema
 
 
 class AddToCartAPI(generics.GenericAPIView):
+    """
+    AddToCartAPI is for add to cart to place the order
+    """
     serializer_class = AddCartSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -43,6 +48,9 @@ class AddToCartAPI(generics.GenericAPIView):
 
 
 class RetrieveCartAPI(generics.GenericAPIView):
+    """
+    RetrieveCartAPI is for get the cart for users
+    """
     serializer_class = GetAllCartSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -72,6 +80,9 @@ class RetrieveCartAPI(generics.GenericAPIView):
 
 
 class DeleteCartAPI(generics.GenericAPIView):
+    """
+    DeleteCartAPI is for delete the cart by id
+    """
     serializer_class = AddCartSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -95,6 +106,9 @@ class DeleteCartAPI(generics.GenericAPIView):
 
 
 class UpdateCartAPI(generics.GenericAPIView):
+    """
+    UpdateCartAPI is for update the cart by id
+    """
     serializer_class = AddCartSerializer
     permission_classes = [permissions.IsAuthenticated]
 
