@@ -1,5 +1,6 @@
 import jwt
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.forms import AuthenticationForm
 
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
@@ -13,7 +14,8 @@ from rest_framework_jwt.settings import api_settings
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from accounts.forms import CreateUserForm
+from accounts import serializers
+from accounts.forms import NewUserForm
 from accounts.logger import get_logger
 from accounts.status import response_code
 from accounts.utils import Util
@@ -27,7 +29,6 @@ from accounts.serializers import (
     LoginSerializer,
     LogoutSerializer,
 )
-from django.views.decorators.csrf import requires_csrf_token
 
 logger = get_logger()
 
@@ -36,48 +37,45 @@ jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 
 
 class Home(TemplateView):
-    template_name = 'Home.html'
+    template_name = 'profile.html'
 
 
 def loginPage(request):
-    if request.user.is_authenticated:
-        return redirect('Home')
-    else:
-        if request.method == 'POST':
-            email = request.POST.get('email')
-            print(email)
-            password = request.POST.get('password')
-            print(password)
-
-            user = authenticate(email=email, password=password)
-            print(user)
-
-            if user is not None:
-                login(request, user)
-                return redirect('Home')
+    if request.method == "POST":
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.data.get('username')
+            password = form.data.get('password')
+            user = authenticate(username=username, password=password)
+            if user:
+                messages.info(request, f"You are now logged in as {username}.")
+                return redirect('profile')
             else:
-                messages.info(request, 'email OR password is incorrect')
-
-        context = {}
-        return render(request, 'login.html', context)
+                messages.error(request, "Invalid username or password.")
+        else:
+            messages.error(request, "Invalid username or password.")
+    form = AuthenticationForm()
+    return render(request=request, template_name="login.html", context={"login_form": form})
 
 
 def registerPage(request):
-    if request.user.is_authenticated:
-        return redirect('Home')
-    else:
-        form = CreateUserForm()
-        if request.method == 'POST':
-            form = CreateUserForm(request.POST)
-            if form.is_valid():
-                form.save()
-                user = form.cleaned_data.get('username')
-                print(user)
-                messages.success(request, 'Account was created for ' + user)
+    if request.method == "POST":
+        form = NewUserForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            print('abcd')
+            messages.success(request, "Registration successful.")
+            return redirect('profile')
+        messages.error(request, "Unsuccessful registration. Invalid information.")
+    form = NewUserForm()
+    return render(request=request, template_name="registration.html", context={"form": form})
 
-                return redirect('login.html')
-        context = {'form': form}
-        return render(request, 'registration.html', context)
+
+def logoutPage(request):
+    logout(request)
+    messages.info(request, "You have successfully logged out.")
+    return redirect('profile')
 
 
 class RegisterView(generics.GenericAPIView):
@@ -87,13 +85,15 @@ class RegisterView(generics.GenericAPIView):
     serializer_class = RegisterSerializer
     renderer_classes = (UserRenderer,)
 
-    def get(self, request):
-        return render(request, 'registration.html')
-
     def post(self, request):
         try:
-            user = request.data
-            serializer = self.serializer_class(data=user)
+            confirm_password = request.data.pop('confirm_password')
+            print(request.data)
+
+            if confirm_password != request.data.get('password'):
+                raise serializers.ValidationError('Password does not match')
+
+            serializer = self.serializer_class(data=request.data)
             serializer.is_valid(raise_exception=True)
             serializer.save()
             user_data = serializer.data
@@ -106,7 +106,7 @@ class RegisterView(generics.GenericAPIView):
                          ' Use the link below to verify your email \n' + absurl
             data = {'email_body': email_body, 'to_email': user.email, 'from_email': settings.EMAIL_HOST_USER,
                     'email_subject': 'Verify your email'}
-            # Util.send_email(data)
+            Util.send_email(data)
             response = {
                 'success': True,
                 'msg': response_code[200],
@@ -220,11 +220,6 @@ class LogoutAPIView(generics.GenericAPIView):
     """
     serializer_class = LogoutSerializer
 
-    def get(self, request):
-        if request.user.is_authenticated():
-            return redirect('login.html')
-        return
-
     def post(self, request):
         try:
             Refresh_token = request.data["refresh"]
@@ -278,9 +273,6 @@ class LoginAPIView(generics.GenericAPIView):
     LoginAPIView(generics.GenericAPIView) is for Login for user who have registered
     """
     serializer_class = LoginSerializer
-
-    # def get(self, request):
-    #     return render(request, 'login.html')
 
     def post(self, request):
         try:
