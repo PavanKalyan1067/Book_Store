@@ -9,22 +9,22 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 class UserManager(BaseUserManager):
 
-    def create_user(self, username, email, password=None):
+    def create_user(self, username, email, password,*args,**kwargs):
         if username is None:
             raise TypeError('Users should have a username')
         if email is None:
             raise TypeError('Users should have a Email')
 
-        user = self.model(username=username, email=self.normalize_email(email))
+        user = self.model(username=username, email=self.normalize_email(email),*args,**kwargs)
         user.set_password(password)
         user.save()
         return user
 
-    def create_superuser(self, username, email, password=None):
+    def create_superuser(self, username, email, password,*args,**kwargs):
         if password is None:
             raise TypeError('Password should not be none')
 
-        user = self.create_user(username, email, password)
+        user = self.create_user(username, email, password,*args,**kwargs)
         user.is_superuser = True
         user.is_staff = True
         user.save()
@@ -33,7 +33,6 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     password = models.CharField(max_length=250)
-    # confirm_password = models.CharField(max_length=250)
     username = models.CharField(max_length=255, unique=True, db_index=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
