@@ -12,8 +12,6 @@ from accounts.utils import Util
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=68, min_length=6, style={'input_type': 'password'}, write_only=True)
-    confirm_password = serializers.CharField(max_length=68, min_length=6, style={'input_type': 'password'},
-                                             write_only=True)
 
     default_error_messages = {
         'username': 'The username should only contain alphanumeric characters'}
@@ -27,10 +25,8 @@ class RegisterSerializer(serializers.ModelSerializer):
             'last_name',
             'email',
             'password',
-            'confirm_password',
         ]
 
-        extra_kwargs = {'password': {'write_only': True}}
 
         required_fields = [
             'first_name',
@@ -38,18 +34,14 @@ class RegisterSerializer(serializers.ModelSerializer):
             'username',
             'email',
             'password',
-            'confirm_password'
         ]
 
         read_only_fields = ["id"]
 
         def validate(self, attrs):
+            print(attrs)
             email = attrs.get('email', '')
             username = attrs.get('username', '')
-            confirm_password = attrs.pop('confirm_password')
-
-            if confirm_password != attrs.get('password'):
-                raise serializers.ValidationError('Password does not match')
 
             if not username.isalnum():
                 raise serializers.ValidationError(self)
