@@ -1,63 +1,27 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title> Logout Page </title>
-<style>
-Body {
-  font-family: Calibri, Helvetica, sans-serif;
-  background-color: pink;
-}
-button {
-       background-color: #4CAF50;
-       width: 100%;
-        color: orange;
-        padding: 15px;
-        margin: 10px 0px;
-        border: none;
-        cursor: pointer;
-         }
- form {
-        border: 3px solid #f1f1f1;
-    }
- input[type=text], input[type=password] {
-        width: 100%;
-        margin: 8px 0;
-        padding: 12px 20px;
-        display: inline-block;
-        border: 2px solid green;
-        box-sizing: border-box;
-    }
- button:hover {
-        opacity: 0.7;
-    }
-  .cancelbtn {
-        width: auto;
-        padding: 10px 18px;
-        margin: 10px 5px;
-    }
 
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="#">Navbar</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="False" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarText">
+    <ul class="navbar-nav mr-auto">
+      {% if user.is_authenticated %}
 
- .container {
-        padding: 25px;
-        background-color: lightblue;
-    }
-</style>
-</head>
-<body>
-    <div id="logout">
-        <form action="" method="POST">
-            {% csrf_token %}
-            {% if request.user.is_authenticated %}
-                <a href="{% url 'logout' %}">Logout User</a>
-            {% else %}
-                <h1>Logout User</h1>
-                <label for="refresh"> RefreshToken : </label><input type="text" name="refresh" id="refresh" placeholder="refresh">
-                <br>
-                <br>
-                <button type="submit" id="btn">Logout</button>
-            {% endif %}
-    </form>
-    </div>
-</body>
-</html>
+      <li class="nav-item">
+        <a class="nav-link" href="/logout">Logout</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Welcome, {{user.username}}</a>
+      </li>
+
+      {% else %}
+
+      <li class="nav-item">
+        <a class="nav-link" href="/login">Login</a>
+      </li>
+
+      {% endif %}
+    </ul>
+  </div>
+</nav>
