@@ -46,13 +46,19 @@ class RegisterSerializer(serializers.ModelSerializer):
         def validate(self, attrs):
             email = attrs.get('email', '')
             username = attrs.get('username', '')
+            confirm_password = attrs.pop('confirm_password')
+
+            if confirm_password != attrs.get('password'):
+                raise serializers.ValidationError('Password does not match')
 
             if not username.isalnum():
                 raise serializers.ValidationError(self)
             return attrs
 
         def create(self, validated_data):
+            print(validated_data)
             return User.objects.create_user(**validated_data)
+
 
 
 class EmailVerificationSerializer(serializers.ModelSerializer):

@@ -33,7 +33,7 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     password = models.CharField(max_length=250)
-    confirm_password = models.CharField(max_length=250)
+    # confirm_password = models.CharField(max_length=250)
     username = models.CharField(max_length=255, unique=True, db_index=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)

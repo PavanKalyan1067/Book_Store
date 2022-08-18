@@ -1,16 +1,19 @@
 import jwt
+from django.contrib.auth import authenticate, login
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from django.conf import settings
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
+from django.contrib import messages
 
 from rest_framework import generics
 from rest_framework_jwt.settings import api_settings
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from accounts.forms import CreateUserForm
 from accounts.logger import get_logger
 from accounts.status import response_code
 from accounts.utils import Util
@@ -24,6 +27,7 @@ from accounts.serializers import (
     LoginSerializer,
     LogoutSerializer,
 )
+from django.views.decorators.csrf import requires_csrf_token
 
 logger = get_logger()
 
@@ -33,6 +37,47 @@ jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 
 class Home(TemplateView):
     template_name = 'Home.html'
+
+
+def loginPage(request):
+    if request.user.is_authenticated:
+        return redirect('Home')
+    else:
+        if request.method == 'POST':
+            email = request.POST.get('email')
+            print(email)
+            password = request.POST.get('password')
+            print(password)
+
+            user = authenticate(email=email, password=password)
+            print(user)
+
+            if user is not None:
+                login(request, user)
+                return redirect('Home')
+            else:
+                messages.info(request, 'email OR password is incorrect')
+
+        context = {}
+        return render(request, 'login.html', context)
+
+
+def registerPage(request):
+    if request.user.is_authenticated:
+        return redirect('Home')
+    else:
+        form = CreateUserForm()
+        if request.method == 'POST':
+            form = CreateUserForm(request.POST)
+            if form.is_valid():
+                form.save()
+                user = form.cleaned_data.get('username')
+                print(user)
+                messages.success(request, 'Account was created for ' + user)
+
+                return redirect('login.html')
+        context = {'form': form}
+        return render(request, 'registration.html', context)
 
 
 class RegisterView(generics.GenericAPIView):
@@ -61,7 +106,7 @@ class RegisterView(generics.GenericAPIView):
                          ' Use the link below to verify your email \n' + absurl
             data = {'email_body': email_body, 'to_email': user.email, 'from_email': settings.EMAIL_HOST_USER,
                     'email_subject': 'Verify your email'}
-            Util.send_email(data)
+            # Util.send_email(data)
             response = {
                 'success': True,
                 'msg': response_code[200],
@@ -176,7 +221,9 @@ class LogoutAPIView(generics.GenericAPIView):
     serializer_class = LogoutSerializer
 
     def get(self, request):
-        return render(request, 'logout.html')
+        if request.user.is_authenticated():
+            return redirect('login.html')
+        return
 
     def post(self, request):
         try:
@@ -232,8 +279,8 @@ class LoginAPIView(generics.GenericAPIView):
     """
     serializer_class = LoginSerializer
 
-    def get(self, request):
-        return render(request, 'login.html')
+    # def get(self, request):
+    #     return render(request, 'login.html')
 
     def post(self, request):
         try:
