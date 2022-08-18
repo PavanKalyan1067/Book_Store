@@ -44,8 +44,10 @@ INSTALLED_APPS = [
     'carts',
     'orders',
     'drf_yasg',
+    'crispy_forms',
 
 ]
+CRISPY_TEMPLATE_PACK = 'uni_form'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
