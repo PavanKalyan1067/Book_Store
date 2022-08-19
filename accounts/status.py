@@ -44,6 +44,10 @@ class CustomExceptions:
     def CartDoesNotExist(cls, param, param1):
         pass
 
+    @classmethod
+    def BookAlreadyExists(cls, param, param1):
+        pass
+
 
 class CartDoesNotExist(CustomExceptions):
     pass

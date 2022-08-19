@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'orders',
     'drf_yasg',
     'crispy_forms',
+    'wishlist',
 
 ]
 CRISPY_TEMPLATE_PACK = 'uni_form'
