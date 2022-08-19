@@ -12,6 +12,9 @@ from wishlist.serializers import WishlistSerializer, GetWishlistSerializer
 
 
 class AddToWishlistAPI(generics.GenericAPIView):
+    """
+    AddToWishlistAPI is for Add Book for wishlist by user
+    """
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = WishlistSerializer
 
@@ -43,6 +46,9 @@ class AddToWishlistAPI(generics.GenericAPIView):
 
 
 class GetWishlistAPIView(generics.GenericAPIView):
+    """
+    GetWishlistAPIView is for get all Wishlist books and user details
+    """
     @swagger_auto_schema(manual_parameters=[
         openapi.Parameter('Authorization', openapi.IN_HEADER, "token", type=openapi.TYPE_STRING)
     ])
@@ -74,6 +80,9 @@ class GetWishlistAPIView(generics.GenericAPIView):
 
 
 class DeleteWishlistAPI(generics.GenericAPIView):
+    """
+    DeleteWishlistAPI is for delete wishlist book by id
+    """
     serializer_class = WishlistSerializer
     permission_classes = [permissions.IsAuthenticated]
 
