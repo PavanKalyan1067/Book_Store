@@ -4,7 +4,7 @@ from rest_framework.test import APITestCase
 
 from accounts.models import User
 from books.models import Book
-from carts.models import Cart
+from orders.models import Order
 
 
 class BooksAppTestCases(APITestCase):
@@ -18,7 +18,7 @@ class BooksAppTestCases(APITestCase):
             book_quantity="5",
             description="This is a story book",
         )
-        self.cart = Cart.objects.create(
+        self.cart = Order.objects.create(
             book=self.book,
             book_quantity="5",
             total_price=self.book.price,

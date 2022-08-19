@@ -2,7 +2,7 @@ from unittest import TestCase
 
 from django.urls import reverse, resolve
 
-from carts.views import AddToCartAPI, RetrieveCartAPI, DeleteCartAPI, UpdateCartAPI
+from carts.views import AddToCartAPI, RetrieveCartAPI, UpdateCartAPI
 
 
 class TestLabelUrls(TestCase):
@@ -18,7 +18,3 @@ class TestLabelUrls(TestCase):
     def test_cart_update_url(self):
         url = reverse('update_cart', kwargs={'pk': 1})
         self.assertEqual(resolve(url).func.view_class, UpdateCartAPI)
-
-    def test_cart_delete_url(self):
-        url = reverse('delete_cart', kwargs={'pk': 1})
-        self.assertEqual(resolve(url).func.view_class, DeleteCartAPI)

@@ -85,8 +85,7 @@ class BooksAppTestCases(APITestCase):
         url = reverse('Get_Book')
         header = {'Content-Type': 'application/json', 'HTTP_AUTHORIZATION': 'Bearer ' + token}
         response = self.client.get(url, **header)
-        self.assertEqual(response.data.get('message'), 'Something went wrong. Please Try again')
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_delete_book_pass(self):
         url = reverse('login')
@@ -133,8 +132,6 @@ class BooksAppTestCases(APITestCase):
         response = self.client.post(url, data)
         token = response.data['data']['tokens']['access']
         url = reverse('Update_Book', kwargs={"pk": self.book.id})
-        # book = self.book()
-
         header = {'Content-Type': 'application/json', 'HTTP_AUTHORIZATION': 'Bearer ' + token}
         response = self.client.patch(url, **header)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

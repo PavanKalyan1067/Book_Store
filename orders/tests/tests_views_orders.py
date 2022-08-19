@@ -4,7 +4,7 @@ from rest_framework.test import APITestCase
 
 from accounts.models import User
 from books.models import Book
-from carts.models import Cart
+from orders.models import Order
 
 
 class BooksAppTestCases(APITestCase):
@@ -18,14 +18,14 @@ class BooksAppTestCases(APITestCase):
             book_quantity="5",
             description="This is a story book",
         )
-        self.cart = Cart.objects.create(
+        self.cart = Order.objects.create(
             book=self.book,
             book_quantity="5",
             total_price=self.book.price,
             user=self.user1
         )
 
-    def test_add_cart_api_pass(self):
+    def test_add_order_api_pass(self):
         url = reverse('login')
         # Login successful
         data = {'email': 'a7b7@gmail.com', 'password': '123Aabc'}
@@ -35,15 +35,16 @@ class BooksAppTestCases(APITestCase):
         # creating order pass
         url = reverse('checkout')
         checkout = {
-            "cart": self.cart.id,
-            "address": "hyd"
+            "book": self.book.id,
+            "book_quantity": "3",
+            "user": "1",
+            "address": "Hyderabad",
         }
         header = {'Content-Type': 'application/json', 'HTTP_AUTHORIZATION': 'Bearer ' + token}
         response = self.client.post(url, checkout, **header)
-        self.assertEqual(response.data.get('message'), 'Success')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_add_cart_api_fail(self):
+    def test_add_order_api_fail(self):
         url = reverse('login')
         # Login successful
         data = {'email': 'a7b7@gmail.com', 'password': '123Aabc'}
@@ -60,7 +61,7 @@ class BooksAppTestCases(APITestCase):
         self.assertEqual(response.data.get('message'), 'Something went wrong. Please Try again')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_get_all_cart_api_pass(self):
+    def test_get_all_order_api_pass(self):
         url = reverse('login')
         # Login successful
         data = {'email': 'a7b7@gmail.com', 'password': '123Aabc'}
