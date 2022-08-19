@@ -1,17 +1,14 @@
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status, permissions, generics
 from rest_framework.response import Response
 
 from accounts.status import response_code, CustomExceptions
 from accounts.views import logger
-
-from orders.models import Order
+from orders.models import Order, Status
 from orders.serializers import OrderSerializer, GetOrderSerializer
-
-from drf_yasg import openapi
-from drf_yasg.utils import swagger_auto_schema
 
 
 class OrderAPIView(generics.GenericAPIView):
@@ -29,6 +26,7 @@ class OrderAPIView(generics.GenericAPIView):
             order = OrderSerializer(data=data)
             order.is_valid(raise_exception=True)
             cart = (order.validated_data.get('cart'))
+            order.status = Status.OR.value
             order.save()
             response = {
                 'success': True,
@@ -62,7 +60,7 @@ class GetOrderAPIView(generics.GenericAPIView):
         try:
             user = request.user
             if user:
-                order = Order.objects.filter(user_id=user, cart__ordered=True)
+                order = Order.objects.filter(user_id=user)
                 if not order:
                     raise CustomExceptions.CartDoesNotExist('Create order at first', 400)
                 if order:
