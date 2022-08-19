@@ -1,17 +1,14 @@
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 
 from accounts.status import response_code
 from accounts.views import logger
-
-from carts.models import Cart
 from carts.serializers import AddCartSerializer, GetAllCartSerializer
-
-from drf_yasg import openapi
-from drf_yasg.utils import swagger_auto_schema
+from orders.models import Order, Status
 
 
 class AddToCartAPI(generics.GenericAPIView):
@@ -29,6 +26,7 @@ class AddToCartAPI(generics.GenericAPIView):
         try:
             cart = AddCartSerializer(data=data)
             cart.is_valid(raise_exception=True)
+            cart.status = Status.OR.value
             cart.save()
             response = {
                 'success': True,
@@ -61,7 +59,7 @@ class RetrieveCartAPI(generics.GenericAPIView):
     def get(self, request):
         user = request.user
         try:
-            cart = Cart.objects.filter(user_id=user)
+            cart = Order.objects.filter(user_id=user)
             serializer = GetAllCartSerializer(cart, many=True)
             response = {
                 'success': True,
@@ -88,7 +86,7 @@ class DeleteCartAPI(generics.GenericAPIView):
 
     def delete(self, request, pk):
         try:
-            cart = Cart.objects.get(pk=pk)
+            cart = Order.objects.get(pk=pk)
             cart.delete()
             response = {
                 'success': True,
@@ -115,7 +113,7 @@ class UpdateCartAPI(generics.GenericAPIView):
     def patch(self, request, pk):
         try:
             data = request.data
-            cart = Cart.objects.get(pk=pk)
+            cart = Order.objects.get(pk=pk)
             serializer = AddCartSerializer(cart, data=data, partial=True)
             serializer.is_valid(raise_exception=True)
             serializer.save()
