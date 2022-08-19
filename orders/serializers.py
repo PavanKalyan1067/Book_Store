@@ -7,24 +7,22 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = [
-            'cart',
+            'book',
+            'book_quantity',
+            'user',
             'address'
         ]
 
     def create(self, validated_data):
-        cart = validated_data.get('cart')
-
-        update_data = {'total_price': cart.total_price, "user_id": cart.user.id, "book_id": cart.book.id,
-                       "cart_id": cart.id, "book_quantity": cart.book_quantity}
-
-        validated_data.update(update_data)
-
-        cart.ordered = True
-        cart.save()
-
-        create_query = self.Meta.model.objects.create(**validated_data)
-
-        return create_query
+        book = validated_data.get('book')
+        book_quantity = validated_data.get('book_quantity')
+        if book.book_quantity < book_quantity:
+            raise Exception('book out of stock')
+        book.book_quantity -= book_quantity
+        book.save()
+        total_price = book.price * book_quantity
+        validated_data.update({'total_price': total_price})
+        return self.Meta.model.objects.create(**validated_data)
 
 
 class GetOrderSerializer(serializers.ModelSerializer):
