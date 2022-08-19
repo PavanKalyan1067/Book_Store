@@ -1,5 +1,7 @@
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status, permissions, generics
 from rest_framework.response import Response
 
@@ -13,6 +15,9 @@ class AddToWishlistAPI(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = WishlistSerializer
 
+    @swagger_auto_schema(manual_parameters=[
+        openapi.Parameter('Authorization', openapi.IN_HEADER, "token", type=openapi.TYPE_STRING)
+    ], request_body=WishlistSerializer)
     def post(self, request):
         try:
             wishlist = WishlistSerializer(data=request.data)
@@ -38,6 +43,9 @@ class AddToWishlistAPI(generics.GenericAPIView):
 
 
 class GetWishlistAPIView(generics.GenericAPIView):
+    @swagger_auto_schema(manual_parameters=[
+        openapi.Parameter('Authorization', openapi.IN_HEADER, "token", type=openapi.TYPE_STRING)
+    ])
     @method_decorator(cache_page(60 * 60))
     def get(self, request):
         try:
