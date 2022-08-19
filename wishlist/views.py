@@ -3,8 +3,8 @@ from rest_framework.response import Response
 
 from accounts import logger
 from accounts.status import response_code, CustomExceptions
-from .models import Wishlist
-from .serializers import WishlistSerializer, GetWishlistSerializer
+from orders.models import Order, Status
+from wishlist.serializers import WishlistSerializer, GetWishlistSerializer
 
 
 class AddToWishlistAPI(generics.GenericAPIView):
@@ -13,16 +13,17 @@ class AddToWishlistAPI(generics.GenericAPIView):
 
     def post(self, request):
         try:
-            wishlist_serializer = WishlistSerializer(data=request.data)
-            wishlist_serializer.is_valid(raise_exception=True)
-            # book = Wishlist.objects.get(book=wishlist_serializer.data.get('book'))
-            # if book:
-            #     raise CustomExceptions.BookAlreadyExists('book already exists in your wishlist', 400)
-            wishlist_serializer.save()
+            wishlist = WishlistSerializer(data=request.data)
+            wishlist.is_valid(raise_exception=True)
+            book = Order.objects.get(book=wishlist.data.get('book_id'))
+            if book:
+                raise CustomExceptions.BookAlreadyExists('book already exists in your wishlist', 400)
+            wishlist.status = Status.WL.value
+            wishlist.save()
             response = {
                 'message': 'book added to wishlist',
                 'status_code': 200,
-                'data': wishlist_serializer.data}
+                'data': wishlist.data}
             return Response(response, status=status.HTTP_201_CREATED)
         except Exception as e:
             response = {
@@ -40,7 +41,7 @@ class GetWishlistAPIView(generics.GenericAPIView):
         try:
             user = request.user
             if user:
-                wishlist = Wishlist.objects.filter(user_id=user)
+                wishlist = Order.objects.filter(user_id=user)
                 if not wishlist:
                     raise CustomExceptions.CartDoesNotExist('Add to wishlist at first', 400)
                 if wishlist:
@@ -52,6 +53,29 @@ class GetWishlistAPIView(generics.GenericAPIView):
                     }
                     return Response(response, status=status.HTTP_200_OK)
                 return Response(status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            response = {
+                'success': False,
+                'message': response_code[416],
+                'data': str(e)
+            }
+            logger.exception(e)
+            return Response(response)
+
+
+class DeleteWishlistAPI(generics.GenericAPIView):
+    serializer_class = WishlistSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def delete(self, request, pk):
+        try:
+            cart = Order.objects.get(pk=pk)
+            cart.delete()
+            response = {
+                'success': True,
+                'message': response_code[200],
+            }
+            return Response(response)
         except Exception as e:
             response = {
                 'success': False,
