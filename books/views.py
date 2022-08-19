@@ -11,7 +11,6 @@ from accounts.status import response_code, DoesNotExist
 
 from books.models import Book
 from books.serializers import AddBookSerializer, BookSerializer
-from books.utils import BookRedis
 
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
@@ -39,13 +38,10 @@ class AddBookAPI(generics.GenericAPIView):
     ], request_body=AddBookSerializer)
     def post(self, request):
         try:
-            user = request.user.is_staff
             if request.user.is_staff:
-                data = request.data
-                book = AddBookSerializer(data=data)
+                book = AddBookSerializer(data=request.data)
                 book.is_valid(raise_exception=True)
                 book.save()
-                BookRedis.update(user=user, book_dict=book.data)
                 response = {
                     'success': True,
                     'message': response_code[200],
