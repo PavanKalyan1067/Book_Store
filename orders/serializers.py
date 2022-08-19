@@ -30,7 +30,6 @@ class OrderSerializer(serializers.ModelSerializer):
 class GetOrderSerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField()
     book_id = serializers.IntegerField()
-    cart_id = serializers.IntegerField()
     book_quantity = serializers.IntegerField()
     total_price = serializers.FloatField()
     address = serializers.CharField()
@@ -40,7 +39,6 @@ class GetOrderSerializer(serializers.ModelSerializer):
         fields = [
             'user_id',
             'book_id',
-            'cart_id',
             'book_quantity',
             'total_price',
             'address'
