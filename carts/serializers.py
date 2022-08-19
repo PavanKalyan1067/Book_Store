@@ -1,11 +1,11 @@
 from rest_framework import serializers
 
-from carts.models import Cart
+from orders.models import Order
 
 
 class AddCartSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Cart
+        model = Order
         fields = [
             'book',
             'book_quantity',
@@ -26,5 +26,5 @@ class AddCartSerializer(serializers.ModelSerializer):
 
 class GetAllCartSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Cart
+        model = Order
         fields = '__all__'
