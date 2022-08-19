@@ -25,15 +25,14 @@ class OrderAPIView(generics.GenericAPIView):
             data = request.data
             order = OrderSerializer(data=data)
             order.is_valid(raise_exception=True)
-            cart = (order.validated_data.get('cart'))
             order.status = Status.OR.value
             order.save()
             response = {
                 'success': True,
-                'message': response_code[200], f'order has been placed by {cart.user.username}'
-                                               'data': order.data
+                'message': response_code[200],
+                'data': order.data
             }
-            return Response(response)
+            return Response(response, status=status.HTTP_201_CREATED)
 
         except Exception as e:
             response = {
