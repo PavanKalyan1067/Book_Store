@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from orders.models import Order
+from orders.models import Order, Status
 
 
 class WishlistSerializer(serializers.ModelSerializer):
@@ -9,7 +9,7 @@ class WishlistSerializer(serializers.ModelSerializer):
         fields = [
             'book',
             'book_quantity',
-            'user',
+            'status',
         ]
 
     def create(self, validated_data):
@@ -21,6 +21,7 @@ class WishlistSerializer(serializers.ModelSerializer):
         book.save()
         total_price = book.price * book_quantity
         validated_data.update({'total_price': total_price})
+        validated_data['status'] = Status.WL
         return self.Meta.model.objects.create(**validated_data)
 
 

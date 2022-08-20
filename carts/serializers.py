@@ -7,10 +7,12 @@ class AddCartSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = [
+            'id',
             'book',
             'book_quantity',
-            'user',
+            'status',
         ]
+        read_only_fields = ['id', 'status']
 
     def create(self, validated_data):
         book = validated_data.get('book')
