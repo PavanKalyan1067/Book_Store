@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from accounts.status import response_code
 from accounts.views import logger
 from carts.serializers import AddCartSerializer, GetAllCartSerializer
-from orders.models import Order, Status
+from orders.models import Order
 
 
 class AddToCartAPI(generics.GenericAPIView):
@@ -22,12 +22,10 @@ class AddToCartAPI(generics.GenericAPIView):
         openapi.Parameter('Authorization', openapi.IN_HEADER, "token", type=openapi.TYPE_STRING)
     ], request_body=AddCartSerializer)
     def post(self, request):
-        data = request.data
         try:
-            cart = AddCartSerializer(data=data)
+            cart = AddCartSerializer(data=request.data)
             cart.is_valid(raise_exception=True)
-            cart.status = Status.OR.value
-            cart.save()
+            cart.save(user_id=request.user.id)
             response = {
                 'success': True,
                 'message': response_code[200],

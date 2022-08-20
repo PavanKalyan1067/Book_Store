@@ -7,7 +7,7 @@ from rest_framework.response import Response
 
 from accounts.status import response_code, CustomExceptions
 from accounts.views import logger
-from orders.models import Order, Status
+from orders.models import Order
 from orders.serializers import OrderSerializer, GetOrderSerializer
 
 
@@ -22,15 +22,13 @@ class OrderAPIView(generics.GenericAPIView):
     ], request_body=OrderSerializer)
     def post(self, request):
         try:
-            data = request.data
-            order = OrderSerializer(data=data)
-            order.is_valid(raise_exception=True)
-            order.status = Status.OR.value
-            order.save()
+            serializer = OrderSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save(user_id=request.user.id)
             response = {
                 'success': True,
                 'message': response_code[200],
-                'data': order.data
+                'data': serializer.data
             }
             return Response(response, status=status.HTTP_201_CREATED)
 
@@ -61,7 +59,7 @@ class GetOrderAPIView(generics.GenericAPIView):
             if user:
                 order = Order.objects.filter(user_id=user)
                 if not order:
-                    raise CustomExceptions.CartDoesNotExist('Create order at first', 400)
+                    raise CustomExceptions.CartDoesNotExist('Create order at first', status.HTTP_400_BAD_REQUEST)
                 if order:
                     cart_serializer = GetOrderSerializer(order, many=True)
                     response = {
@@ -70,8 +68,6 @@ class GetOrderAPIView(generics.GenericAPIView):
                         'data': cart_serializer.data
                     }
                     return Response(response, status=status.HTTP_200_OK)
-                return Response(status=status.HTTP_400_BAD_REQUEST)
-            return Response(status=status.HTTP_400_BAD_REQUEST)
 
         except Exception as e:
             response = {

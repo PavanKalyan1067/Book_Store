@@ -7,7 +7,7 @@ from rest_framework.response import Response
 
 from accounts import logger
 from accounts.status import response_code, CustomExceptions
-from orders.models import Order, Status
+from orders.models import Order
 from wishlist.serializers import WishlistSerializer, GetWishlistSerializer
 
 
@@ -25,11 +25,7 @@ class AddToWishlistAPI(generics.GenericAPIView):
         try:
             wishlist = WishlistSerializer(data=request.data)
             wishlist.is_valid(raise_exception=True)
-            book = Order.objects.get(book=wishlist.data.get('book_id'))
-            if book:
-                raise CustomExceptions.BookAlreadyExists('book already exists in your wishlist', 400)
-            wishlist.status = Status.WL.value
-            wishlist.save()
+            wishlist.save(user_id=request.user.id)
             response = {
                 'message': 'book added to wishlist',
                 'status_code': 200,
