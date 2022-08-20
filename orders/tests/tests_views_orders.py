@@ -42,7 +42,7 @@ class BooksAppTestCases(APITestCase):
         }
         header = {'Content-Type': 'application/json', 'HTTP_AUTHORIZATION': 'Bearer ' + token}
         response = self.client.post(url, checkout, **header)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_add_order_api_fail(self):
         url = reverse('login')
