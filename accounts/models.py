@@ -31,6 +31,12 @@ class UserManager(BaseUserManager):
         return user
 
 
+class Information(models.Model):
+    method = models.CharField(max_length=100)
+    url = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
 class User(AbstractBaseUser, PermissionsMixin):
     password = models.CharField(max_length=250)
     username = models.CharField(max_length=255, unique=True, db_index=True)
