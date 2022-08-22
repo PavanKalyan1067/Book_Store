@@ -4,6 +4,11 @@ from .models import Order, Status
 
 
 class OrderSerializer(serializers.ModelSerializer):
+    address = serializers.SerializerMethodField()
+
+    def get_address(self, obj):
+        return obj.user.address
+
     class Meta:
         model = Order
         fields = [
@@ -12,8 +17,9 @@ class OrderSerializer(serializers.ModelSerializer):
             'book_quantity',
             'address',
             'status',
+            'user',
         ]
-        read_only_fields = ['id', 'status']
+        read_only_fields = ['id', 'status', 'user', 'address']
 
     def create(self, validated_data):
         book = validated_data.get('book')
@@ -29,18 +35,21 @@ class OrderSerializer(serializers.ModelSerializer):
 
 
 class GetOrderSerializer(serializers.ModelSerializer):
-    user_id = serializers.IntegerField()
-    book_id = serializers.IntegerField()
-    book_quantity = serializers.IntegerField()
-    total_price = serializers.FloatField()
-    address = serializers.CharField()
+    address = serializers.SerializerMethodField()
+
+    def get_address(self, obj):
+        return obj.user.address
 
     class Meta:
         model = Order
+
         fields = [
-            'user_id',
+            'id',
+            'user',
             'book_id',
             'book_quantity',
             'total_price',
-            'address'
+            'status',
+            'address',
         ]
+        read_only_fields = ['id', 'status']
