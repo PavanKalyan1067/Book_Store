@@ -24,9 +24,9 @@ class RegisterSerializer(serializers.ModelSerializer):
             'first_name',
             'last_name',
             'email',
+            'address',
             'password',
         ]
-
 
         required_fields = [
             'first_name',
@@ -50,7 +50,6 @@ class RegisterSerializer(serializers.ModelSerializer):
         def create(self, validated_data):
             print(validated_data)
             return User.objects.create_user(**validated_data)
-
 
 
 class EmailVerificationSerializer(serializers.ModelSerializer):
