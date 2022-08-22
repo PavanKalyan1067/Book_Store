@@ -84,10 +84,10 @@ class GetBookAPI(generics.GenericAPIView):
                     'message': response_code[200],
                     'data': book_s.data
                 }
-                return Response(response)
+                return Response(response,status=status.HTTP_200_OK)
             response = {
                 'success': False,
-                'message': response_code[416],
+                'message': "Only staff can perform this action",
             }
             return Response(response, status=status.HTTP_404_NOT_FOUND)
         except DoesNotExist as e:

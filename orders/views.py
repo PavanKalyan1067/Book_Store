@@ -58,16 +58,13 @@ class GetOrderAPIView(generics.GenericAPIView):
             user = request.user
             if user:
                 order = Order.objects.filter(user_id=user)
-                if not order:
-                    raise CustomExceptions.CartDoesNotExist('Create order at first', status.HTTP_400_BAD_REQUEST)
-                if order:
-                    cart_serializer = GetOrderSerializer(order, many=True)
-                    response = {
-                        'success': True,
-                        'message': response_code[200],
-                        'data': cart_serializer.data
-                    }
-                    return Response(response, status=status.HTTP_200_OK)
+                cart_serializer = GetOrderSerializer(order, many=True)
+                response = {
+                    'success': True,
+                    'message': response_code[200],
+                    'data': cart_serializer.data
+                }
+                return Response(response, status=status.HTTP_200_OK)
 
         except Exception as e:
             response = {
