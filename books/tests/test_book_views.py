@@ -85,7 +85,7 @@ class BooksAppTestCases(APITestCase):
         url = reverse('Get_Book')
         header = {'Content-Type': 'application/json', 'HTTP_AUTHORIZATION': 'Bearer ' + token}
         response = self.client.get(url, **header)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete_book_pass(self):
         url = reverse('login')
