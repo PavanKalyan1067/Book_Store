@@ -77,7 +77,7 @@ class CartAPI(generics.GenericAPIView):
         Delete method is for delete the cart by id
         """
         try:
-            cart = Order.objects.get(pk=pk)
+            cart = Order.objects.get(pk=pk, user_id=request.user.id)
             cart.delete()
             response = {
                 'success': True,
@@ -99,7 +99,7 @@ class CartAPI(generics.GenericAPIView):
         """
         try:
             data = request.data
-            cart = Order.objects.get(pk=pk)
+            cart = Order.objects.get(pk=pk, user_id=request.user.id)
             serializer = AddCartSerializer(cart, data=data, partial=True)
             serializer.is_valid(raise_exception=True)
             serializer.save()

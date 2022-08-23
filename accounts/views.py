@@ -96,7 +96,6 @@ class RegisterView(generics.GenericAPIView):
     def post(self, request):
         try:
             confirm_password = request.data.pop('confirm_password')
-            print(request.data)
 
             if confirm_password != request.data.get('password'):
                 raise serializers.ValidationError('Password does not match')

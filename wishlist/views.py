@@ -80,7 +80,7 @@ class WishlistAPIView(generics.GenericAPIView):
         Delete method is for delete wishlist book by id
         """
         try:
-            cart = Order.objects.get(pk=pk)
+            cart = Order.objects.get(pk=pk,user_id=request.user.id)
             cart.delete()
             response = {
                 'success': True,
