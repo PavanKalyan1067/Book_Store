@@ -45,9 +45,9 @@ class CartAPI(generics.GenericAPIView):
             logger.exception(e)
             return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
-    # @swagger_auto_schema(manual_parameters=[
-    #     openapi.Parameter('Authorization', openapi.IN_HEADER, "token", type=openapi.TYPE_STRING)
-    # ])
+    @swagger_auto_schema(manual_parameters=[
+        openapi.Parameter('Authorization', openapi.IN_HEADER, "token", type=openapi.TYPE_STRING)
+    ])
     @method_decorator(cache_page(60 * 60))
     def get(self, request):
         """
