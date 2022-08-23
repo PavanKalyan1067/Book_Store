@@ -6,18 +6,10 @@ from books.views import BookAPIView
 
 class TestLabelUrls(TestCase):
 
-    def test_book_create_url(self):
-        url = reverse('Add_Book')
+    def test_book_create_and_get_url(self):
+        url = reverse('Book_Operations')
         self.assertEqual(resolve(url).func.view_class, BookAPIView)
 
-    def test_book_get_url(self):
-        url = reverse('Get_Book')
-        self.assertEqual(resolve(url).func.view_class, BookAPIView)
-
-    def test_book_update_url(self):
-        url = reverse('Update_Book', kwargs={'pk': 1})
-        self.assertEqual(resolve(url).func.view_class, BookAPIView)
-
-    def test_book_delete_url(self):
-        url = reverse('Del_Book', kwargs={'pk': 1})
+    def test_book_update_and_delete_url(self):
+        url = reverse('Book_Operations', kwargs={'pk': 1})
         self.assertEqual(resolve(url).func.view_class, BookAPIView)

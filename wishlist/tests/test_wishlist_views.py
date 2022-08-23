@@ -33,7 +33,7 @@ class BooksAppTestCases(APITestCase):
         token = response.data['data']['tokens']['access']
 
         # creating Cart pass
-        url = reverse('add_to_cart')
+        url = reverse('WishList_Operations')
         cart = {
             "book": self.book.id,
             "book_quantity": "5",
@@ -41,8 +41,7 @@ class BooksAppTestCases(APITestCase):
         }
         header = {'Content-Type': 'application/json', 'HTTP_AUTHORIZATION': 'Bearer ' + token}
         response = self.client.post(url, cart, **header)
-        self.assertEqual(response.data.get('message'), 'Success')
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_get_all_wishlist_api_pass(self):
         url = reverse('login')
@@ -52,7 +51,7 @@ class BooksAppTestCases(APITestCase):
         token = response.data['data']['tokens']['access']
 
         # Get All Books pass
-        url = reverse('get_wishlist')
+        url = reverse('WishList_Operations')
         header = {'Content-Type': 'application/json', 'HTTP_AUTHORIZATION': 'Bearer ' + token}
         response = self.client.get(url, **header)
         self.assertEqual(response.data.get('message'), 'Success')
@@ -66,22 +65,11 @@ class BooksAppTestCases(APITestCase):
         token = response.data['data']['tokens']['access']
 
         # del Books pass
-        url = reverse('delete_cart', kwargs={'pk': self.cart.id})
+        url = reverse('WishList_Operations', kwargs={'pk': self.cart.id})
         header = {'Content-Type': 'application/json', 'HTTP_AUTHORIZATION': 'Bearer ' + token}
         response = self.client.delete(url, **header)
         self.assertEqual(response.data.get('message'), 'Success')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #
-    # def test_patch_cart_by_id_api_pass(self):
-    #     url = reverse('login')
-    #     # Login successful
-    #     data = {'email': 'a7b7@gmail.com', 'password': '123Aabc'}
-    #     response = self.client.post(url, data)
-    #     token = response.data['data']['tokens']['access']
-    #     url = reverse('update_cart', kwargs={"pk": self.cart.id})
-    #
-    #     header = {'Content-Type': 'application/json', 'HTTP_AUTHORIZATION': 'Bearer ' + token}
-    #     response = self.client.patch(url, **header)
-    #     self.assertEqual(response.data.get('message'), 'Success')
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
 

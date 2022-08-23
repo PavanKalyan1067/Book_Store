@@ -8,9 +8,6 @@ from orders.views import OrderAPIView
 class TestLabelUrls(TestCase):
 
     def test_cart_create_url(self):
-        url = reverse('checkout')
+        url = reverse('Order_Operations')
         self.assertEqual(resolve(url).func.view_class, OrderAPIView)
 
-    def test_cart_get_url(self):
-        url = reverse('get-orders')
-        self.assertEqual(resolve(url).func.view_class, OrderAPIView)

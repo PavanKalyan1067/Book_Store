@@ -33,7 +33,7 @@ class BooksAppTestCases(APITestCase):
         token = response.data['data']['tokens']['access']
 
         # creating order pass
-        url = reverse('checkout')
+        url = reverse('Order_Operations')
         checkout = {
             "book": self.book.id,
             "book_quantity": "3",
@@ -52,7 +52,7 @@ class BooksAppTestCases(APITestCase):
         token = response.data['data']['tokens']['access']
 
         # creating order pass
-        url = reverse('checkout')
+        url = reverse('Order_Operations')
         checkout = {
             "cart": self.cart.id,
         }
@@ -69,7 +69,7 @@ class BooksAppTestCases(APITestCase):
         token = response.data['data']['tokens']['access']
 
         # Get All orders pass
-        url = reverse('get-orders')
+        url = reverse('Order_Operations')
         header = {'Content-Type': 'application/json', 'HTTP_AUTHORIZATION': 'Bearer ' + token}
         response = self.client.get(url, **header)
         self.assertEqual(response.status_code, status.HTTP_200_OK)

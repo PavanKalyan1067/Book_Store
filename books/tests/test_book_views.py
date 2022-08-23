@@ -26,7 +26,7 @@ class BooksAppTestCases(APITestCase):
         token = response.data['data']['tokens']['access']
 
         # creating Book pass
-        url = reverse('Add_Book')
+        url = reverse('Book_Operations')
         book = {
             "book_title": "abd",
             "author": "ab",
@@ -47,7 +47,7 @@ class BooksAppTestCases(APITestCase):
         token = response.data['data']['tokens']['access']
 
         # creating Book fail
-        url = reverse('Add_Book')
+        url = reverse('Book_Operations')
         book = {
             "book_title": "abd",
             "author": "ab",
@@ -68,7 +68,7 @@ class BooksAppTestCases(APITestCase):
         token = response.data['data']['tokens']['access']
 
         # Get All Books pass
-        url = reverse('Get_Book')
+        url = reverse('Book_Operations')
         header = {'Content-Type': 'application/json', 'HTTP_AUTHORIZATION': 'Bearer ' + token}
         response = self.client.get(url, **header)
         self.assertEqual(response.data.get('message'), 'Success')
@@ -82,7 +82,7 @@ class BooksAppTestCases(APITestCase):
         token = response.data['data']['tokens']['access']
 
         # Get All Books fail
-        url = reverse('Get_Book')
+        url = reverse('Book_Operations')
         header = {'Content-Type': 'application/json', 'HTTP_AUTHORIZATION': 'Bearer ' + token}
         response = self.client.get(url, **header)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -95,7 +95,7 @@ class BooksAppTestCases(APITestCase):
         token = response.data['data']['tokens']['access']
 
         # del Books pass
-        url = reverse('Del_Book', kwargs={'pk': self.book.id})
+        url = reverse('Book_Operations', kwargs={'pk': self.book.id})
         header = {'Content-Type': 'application/json', 'HTTP_AUTHORIZATION': 'Bearer ' + token}
         response = self.client.delete(url, **header)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -107,7 +107,7 @@ class BooksAppTestCases(APITestCase):
         response = self.client.post(url, data)
         token = response.data['data']['tokens']['access']
         # del Books fail
-        url = reverse('Del_Book', kwargs={'pk': self.book.id})
+        url = reverse('Book_Operations', kwargs={'pk': self.book.id})
         header = {'Content-Type': 'application/json', 'HTTP_AUTHORIZATION': 'Bearer ' + token}
         response = self.client.delete(url, **header)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -118,9 +118,8 @@ class BooksAppTestCases(APITestCase):
         data = {'email': 'a6b6@gmail.com', 'password': '123Aabc'}
         response = self.client.post(url, data)
         token = response.data['data']['tokens']['access']
-        url = reverse('Update_Book', kwargs={"pk": self.book.id})
-        # book = self.book()
 
+        url = reverse('Book_Operations', kwargs={"pk": self.book.id})
         header = {'Content-Type': 'application/json', 'HTTP_AUTHORIZATION': 'Bearer ' + token}
         response = self.client.patch(url, **header)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -131,7 +130,8 @@ class BooksAppTestCases(APITestCase):
         data = {'email': 'a7b7@gmail.com', 'password': '123Aabc'}
         response = self.client.post(url, data)
         token = response.data['data']['tokens']['access']
-        url = reverse('Update_Book', kwargs={"pk": self.book.id})
+
+        url = reverse('Book_Operations', kwargs={"pk": self.book.id})
         header = {'Content-Type': 'application/json', 'HTTP_AUTHORIZATION': 'Bearer ' + token}
         response = self.client.patch(url, **header)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
