@@ -85,3 +85,49 @@ class OrderAPIView(generics.GenericAPIView):
             }
             logger.exception(e)
             return Response(response)
+
+    def patch(self, request, pk):
+        """
+        Update method is for update the order by id
+        """
+        try:
+            order = Order.objects.get(pk=pk, user_id=request.user.id)
+            serializer = OrderSerializer(order, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            response = {
+                'success': True,
+                'message': response_code[200],
+                'data': serializer.data
+            }
+            return Response(response)
+        except Exception as e:
+            response = {
+                'success': False,
+                'message': response_code[416],
+                'data': str(e)
+            }
+            logger.exception(e)
+            return Response(response)
+
+    def delete(self, request, pk):
+        """
+        Delete method is for delete the order by id
+        """
+        try:
+            user = request.user
+            order = Order.objects.get(pk=pk, user_id=user.id)
+            order.delete()
+            response = {
+                'success': True,
+                'message': response_code[200],
+            }
+            return Response(response)
+        except Exception as e:
+            response = {
+                'success': False,
+                'message': response_code[416],
+                'data': str(e)
+            }
+            logger.exception(e)
+            return Response(response)
