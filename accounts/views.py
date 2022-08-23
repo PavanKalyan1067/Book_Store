@@ -41,6 +41,9 @@ class Home(TemplateView):
 
 
 def loginPage(request):
+    """
+    loginPage method is for login user by html file
+    """
     if request.method == "POST":
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
@@ -59,6 +62,9 @@ def loginPage(request):
 
 
 def registerPage(request):
+    """
+    registerPage is for registering a new user through forms
+    """
     if request.method == "POST":
         form = NewUserForm(request.POST)
         if form.is_valid():
@@ -72,6 +78,9 @@ def registerPage(request):
 
 
 def logoutPage(request):
+    """
+    logoutPage is for logging out a user
+    """
     logout(request)
     messages.info(request, "You have successfully logged out.")
     return redirect('profile')

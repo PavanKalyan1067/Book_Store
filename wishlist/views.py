@@ -11,9 +11,9 @@ from orders.models import Order
 from wishlist.serializers import WishlistSerializer, GetWishlistSerializer
 
 
-class AddToWishlistAPI(generics.GenericAPIView):
+class WishlistAPIView(generics.GenericAPIView):
     """
-    AddToWishlistAPI is for Add Book for wishlist by user
+    WishlistAPIView is for Add and Get Book for wishlist by user
     """
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = WishlistSerializer
@@ -22,6 +22,9 @@ class AddToWishlistAPI(generics.GenericAPIView):
         openapi.Parameter('Authorization', openapi.IN_HEADER, "token", type=openapi.TYPE_STRING)
     ], request_body=WishlistSerializer)
     def post(self, request):
+        """
+        POST Method is for Add Book for wishlist by user
+        """
         try:
             wishlist = WishlistSerializer(data=request.data)
             wishlist.is_valid(raise_exception=True)
@@ -40,16 +43,14 @@ class AddToWishlistAPI(generics.GenericAPIView):
             logger.exception(e)
             return Response(response)
 
-
-class GetWishlistAPIView(generics.GenericAPIView):
-    """
-    GetWishlistAPIView is for get all Wishlist books and user details
-    """
     @swagger_auto_schema(manual_parameters=[
         openapi.Parameter('Authorization', openapi.IN_HEADER, "token", type=openapi.TYPE_STRING)
     ])
     @method_decorator(cache_page(60 * 60))
     def get(self, request):
+        """
+        GET Method is for Get Book for wishlist by user
+        """
         try:
             user = request.user
             if user:
@@ -74,15 +75,10 @@ class GetWishlistAPIView(generics.GenericAPIView):
             logger.exception(e)
             return Response(response)
 
-
-class DeleteWishlistAPI(generics.GenericAPIView):
-    """
-    DeleteWishlistAPI is for delete wishlist book by id
-    """
-    serializer_class = WishlistSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
     def delete(self, request, pk):
+        """
+        Delete method is for delete wishlist book by id
+        """
         try:
             cart = Order.objects.get(pk=pk)
             cart.delete()

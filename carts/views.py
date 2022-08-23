@@ -11,9 +11,9 @@ from carts.serializers import AddCartSerializer, GetAllCartSerializer
 from orders.models import Order
 
 
-class AddToCartAPI(generics.GenericAPIView):
+class CartAPI(generics.GenericAPIView):
     """
-    AddToCartAPI is for add to cart to place the order
+    CartAPI is for perform CURD operation for order
     """
     serializer_class = AddCartSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -22,6 +22,9 @@ class AddToCartAPI(generics.GenericAPIView):
         openapi.Parameter('Authorization', openapi.IN_HEADER, "token", type=openapi.TYPE_STRING)
     ], request_body=AddCartSerializer)
     def post(self, request):
+        """
+        post method is for add to cart to place the order
+        """
         try:
             cart = AddCartSerializer(data=request.data)
             cart.is_valid(raise_exception=True)
@@ -42,19 +45,14 @@ class AddToCartAPI(generics.GenericAPIView):
             logger.exception(e)
             return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
-
-class RetrieveCartAPI(generics.GenericAPIView):
-    """
-    RetrieveCartAPI is for get the cart for users
-    """
-    serializer_class = GetAllCartSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    @swagger_auto_schema(manual_parameters=[
-        openapi.Parameter('Authorization', openapi.IN_HEADER, "token", type=openapi.TYPE_STRING)
-    ])
+    # @swagger_auto_schema(manual_parameters=[
+    #     openapi.Parameter('Authorization', openapi.IN_HEADER, "token", type=openapi.TYPE_STRING)
+    # ])
     @method_decorator(cache_page(60 * 60))
     def get(self, request):
+        """
+        GET Method is for get the cart for users
+        """
         user = request.user
         try:
             cart = Order.objects.filter(user_id=user)
@@ -74,15 +72,10 @@ class RetrieveCartAPI(generics.GenericAPIView):
             logger.exception(e)
             return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
-
-class DeleteCartAPI(generics.GenericAPIView):
-    """
-    DeleteCartAPI is for delete the cart by id
-    """
-    serializer_class = AddCartSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
     def delete(self, request, pk):
+        """
+        Delete method is for delete the cart by id
+        """
         try:
             cart = Order.objects.get(pk=pk)
             cart.delete()
@@ -100,15 +93,10 @@ class DeleteCartAPI(generics.GenericAPIView):
             logger.exception(e)
             return Response(response)
 
-
-class UpdateCartAPI(generics.GenericAPIView):
-    """
-    UpdateCartAPI is for update the cart by id
-    """
-    serializer_class = AddCartSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
     def patch(self, request, pk):
+        """
+        Update method is for update the cart by id
+        """
         try:
             data = request.data
             cart = Order.objects.get(pk=pk)

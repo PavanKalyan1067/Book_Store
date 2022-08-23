@@ -2,7 +2,7 @@ from unittest import TestCase
 
 from django.urls import reverse, resolve
 
-from orders.views import OrderAPIView, GetOrderAPIView
+from orders.views import OrderAPIView
 
 
 class TestLabelUrls(TestCase):
@@ -13,4 +13,4 @@ class TestLabelUrls(TestCase):
 
     def test_cart_get_url(self):
         url = reverse('get-orders')
-        self.assertEqual(resolve(url).func.view_class, GetOrderAPIView)
+        self.assertEqual(resolve(url).func.view_class, OrderAPIView)

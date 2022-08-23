@@ -17,3 +17,14 @@ class Order(models.Model):
     total_price = models.IntegerField(null=False)
     date_ordered = models.DateTimeField(auto_now_add=True)
     status = models.CharField(choices=Status.choices, default=Status.CA, max_length=10)
+
+    def order(self):
+        return {
+            'user': self.user.id,
+            'book': self.book.id,
+            'book_quantity': self.book_quantity,
+            'total_price': self.total_price,
+            'status': self.status,
+            'date_ordered': self.date_ordered,
+
+        }

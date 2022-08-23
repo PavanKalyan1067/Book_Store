@@ -37,6 +37,9 @@ class AddBookAPI(generics.GenericAPIView):
         openapi.Parameter('Authorization', openapi.IN_HEADER, "token", type=openapi.TYPE_STRING)
     ], request_body=AddBookSerializer)
     def post(self, request):
+        """
+        post method is for Add Book by user
+        """
         try:
             if request.user.is_staff:
                 book = AddBookSerializer(data=request.data)
@@ -74,6 +77,9 @@ class GetBookAPI(generics.GenericAPIView):
     ])
     @method_decorator(cache_page(60 * 60))
     def get(self, request):
+        """
+        Get method is for get all Books and user details
+        """
         try:
             user = request.user
             if user.is_staff:
@@ -116,6 +122,9 @@ class UpdateBookAPI(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def patch(self, request, pk):
+        """
+        Update method is for update Book by id
+        """
         user = request.user
         try:
             if user.is_staff:
@@ -147,6 +156,9 @@ class DeleteBookAPI(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def delete(self, request, pk):
+        """
+        Delete method is for delete Book by id
+        """
         user = request.user
         try:
             if user.is_staff:
