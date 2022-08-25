@@ -6,7 +6,7 @@ from rest_framework import status, permissions, generics
 from rest_framework.response import Response
 
 from accounts import logger
-from accounts.status import response_code, CustomExceptions
+from accounts.status import response_code
 from orders.models import Order
 from wishlist.serializers import WishlistSerializer, GetWishlistSerializer
 
@@ -53,19 +53,14 @@ class WishlistAPIView(generics.GenericAPIView):
         """
         try:
             user = request.user
-            if user:
-                wishlist = Order.objects.filter(user_id=user)
-                if not wishlist:
-                    raise CustomExceptions.CartDoesNotExist('Add to wishlist at first', 400)
-                if wishlist:
-                    wishlist_serializer = GetWishlistSerializer(wishlist, many=True)
-                    response = {
-                        'success': True,
-                        'message': response_code[200],
-                        'data': wishlist_serializer.data
-                    }
-                    return Response(response, status=status.HTTP_200_OK)
-                return Response(status.HTTP_400_BAD_REQUEST)
+            wishlist = Order.objects.filter(user_id=user, status='WISHLIST')
+            serializer = GetWishlistSerializer(wishlist, many=True)
+            response = {
+                'success': True,
+                'message': response_code[200],
+                'data': serializer.data
+            }
+            return Response(response, status=status.HTTP_200_OK)
         except Exception as e:
             response = {
                 'success': False,
@@ -80,13 +75,14 @@ class WishlistAPIView(generics.GenericAPIView):
         Delete method is for delete wishlist book by id
         """
         try:
-            cart = Order.objects.get(pk=pk,user_id=request.user.id)
-            cart.delete()
+            wishlist = Order.objects.get(pk=pk, user_id=request.user.id, status='WISHLIST')
+            wishlist.delete()
             response = {
                 'success': True,
                 'message': response_code[200],
             }
             return Response(response)
+
         except Exception as e:
             response = {
                 'success': False,

@@ -42,7 +42,7 @@ class Home(TemplateView):
 
 def loginPage(request):
     """
-    loginPage method is for login user by html file
+    loginPage Function is for login user by html file
     """
     if request.method == "POST":
         form = AuthenticationForm(request, data=request.POST)

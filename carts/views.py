@@ -53,10 +53,11 @@ class CartAPI(generics.GenericAPIView):
         """
         GET Method is for get the cart for users
         """
+        # order = request.order
         user = request.user
         try:
-            cart = Order.objects.filter(user_id=user)
-            serializer = GetAllCartSerializer(cart, many=True)
+            CART = Order.objects.filter(user_id=user, status='CART')
+            serializer = GetAllCartSerializer(CART, many=True)
             response = {
                 'success': True,
                 'message': response_code[200],

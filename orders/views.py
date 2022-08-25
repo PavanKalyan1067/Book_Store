@@ -59,70 +59,15 @@ class OrderAPIView(generics.GenericAPIView):
         """
         try:
             user = request.user
-            if 'order' in cache:
-                order1 = cache.get('order')
-                response = {
-                    'order': order1,
-                    'message': 'Getting All The data from cache',
-                }
-                return Response(response, status=status.HTTP_201_CREATED)
-            else:
-                orders = Order.objects.filter(user_id=user)
-                ord = [order.order() for order in orders]
-                cache.set(orders, ord, timeout=CACHE_TTL)
-                response = {
-                    'success': True,
-                    'message': 'Getting All The data',
-                    'data': ord,
-                }
-                return Response(response, status.HTTP_200_OK)
-
-        except Exception as e:
-            response = {
-                'success': False,
-                'message': response_code[416],
-                'data': str(e)
-            }
-            logger.exception(e)
-            return Response(response)
-
-    def patch(self, request, pk):
-        """
-        Update method is for update the order by id
-        """
-        try:
-            order = Order.objects.get(pk=pk, user_id=request.user.id)
-            serializer = OrderSerializer(order, data=request.data, partial=True)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
+            orders = Order.objects.filter(user_id=user, status='ORDER')
+            ord = [order.order() for order in orders]
+            cache.set(orders, ord, timeout=CACHE_TTL)
             response = {
                 'success': True,
-                'message': response_code[200],
-                'data': serializer.data
+                'message': 'Getting All The data',
+                'data': ord,
             }
-            return Response(response)
-        except Exception as e:
-            response = {
-                'success': False,
-                'message': response_code[416],
-                'data': str(e)
-            }
-            logger.exception(e)
-            return Response(response)
-
-    def delete(self, request, pk):
-        """
-        Delete method is for delete the order by id
-        """
-        try:
-            user = request.user
-            order = Order.objects.get(pk=pk, user_id=user.id)
-            order.delete()
-            response = {
-                'success': True,
-                'message': response_code[200],
-            }
-            return Response(response)
+            return Response(response, status.HTTP_200_OK)
         except Exception as e:
             response = {
                 'success': False,
