@@ -17,8 +17,8 @@ urlpatterns = [
     path('register-page/', views.registerPage, name="register_page"),
     path('login-page/', views.loginPage, name="login_page"),
     path('logout-page/', views.logoutPage, name="logout_page"),
-
     path('profile/', Home.as_view(), name='profile'),
+
     path('api/register/', RegisterView.as_view(), name="register"),
     path('api/login/', LoginAPIView.as_view(), name="login"),
     path('api/logout/', LogoutAPIView.as_view(), name="logout"),
