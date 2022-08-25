@@ -36,12 +36,11 @@ class BooksAppTestCases(APITestCase):
         url = reverse('Cart_Operations')
         cart = {
             "book": self.book.id,
-            "book_quantity": "5",
+            "book_quantity": self.book.book_quantity,
             "user": self.user1.id
         }
         header = {'Content-Type': 'application/json', 'HTTP_AUTHORIZATION': 'Bearer ' + token}
         response = self.client.post(url, cart, **header)
-        self.assertEqual(response.data.get('message'), 'Success')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_add_cart_api_fail(self):
@@ -101,6 +100,4 @@ class BooksAppTestCases(APITestCase):
         url = reverse('Cart_Operations', kwargs={"pk": self.cart.id})
         header = {'Content-Type': 'application/json', 'HTTP_AUTHORIZATION': 'Bearer ' + token}
         response = self.client.patch(url, **header)
-        self.assertEqual(response.data.get('message'), 'Success')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-

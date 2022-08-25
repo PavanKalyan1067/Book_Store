@@ -41,7 +41,7 @@ class BooksAppTestCases(APITestCase):
         }
         header = {'Content-Type': 'application/json', 'HTTP_AUTHORIZATION': 'Bearer ' + token}
         response = self.client.post(url, cart, **header)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_all_wishlist_api_pass(self):
         url = reverse('login')
@@ -68,7 +68,6 @@ class BooksAppTestCases(APITestCase):
         url = reverse('WishList_Operations', kwargs={'pk': self.cart.id})
         header = {'Content-Type': 'application/json', 'HTTP_AUTHORIZATION': 'Bearer ' + token}
         response = self.client.delete(url, **header)
-        self.assertEqual(response.data.get('message'), 'Success')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
