@@ -2,6 +2,9 @@ from accounts.models import Information
 
 
 class SimpleMiddleware:
+    """
+    This class is for custom middleware
+    """
     def __init__(self, get_response):
         self.get_response = get_response
 
