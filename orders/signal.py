@@ -8,6 +8,6 @@ from orders.models import Order
 def create_order(sender, instance, **kwargs):
     if instance.book.book_quantity < instance.book_quantity:
         raise Exception('book out of stock')
-    instance.book.book_quantity -= instance.book_quantity
+    instance.book.book_quantity = int(instance.book.book_quantity) - int(instance.book_quantity)
     instance.book.save()
-    instance.total_price = instance.book.price * instance.book_quantity
+    instance.total_price = int(instance.book.price) * int(instance.book_quantity)
