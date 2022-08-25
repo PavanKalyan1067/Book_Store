@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomePage</title>
+</head>
+<body>
+    <h1>Book Store</h1>
+    <p>Hello {{ user.username }}</p>
+    <a href="{% url 'register_page' %}">Register</a>
+    <a href="{% url 'login_page' %}">Login</a>
+    <a href="{% url 'logout_page' %}">Logout</a>
+
+</body>
